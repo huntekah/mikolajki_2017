@@ -1,2 +1,2 @@
 # mikolajki_2017
-program mikolajkowy
+program mikolajkowy, który spelni twoje marzenia!
