@@ -10,10 +10,11 @@ from random import shuffle
 import os, sys
 import csv
 
-#enter your gmail credentials to see result!
+# enter your gmail credentials to see result!
 HOST_EMAIL = ""
 HOST_PASSWORD = ""
 SUBJECT = "[WOODSTOCK] stań się mikołajem "
+
 
 def send_email(user, pwd, recipient, subject, body):
     import smtplib
@@ -35,25 +36,24 @@ def send_email(user, pwd, recipient, subject, body):
         server_ssl.login(gmail_user, gmail_pwd)
         # ssl server doesn't support or need tls, so don't call server_ssl.starttls()
         server_ssl.sendmail(FROM, TO, message)
-        # server_ssl.quit()
         server_ssl.close()
-        print('successfully sent the mailfrom %s to %s'%(FROM,TO))
+        print('successfully sent the mailfrom %s to %s' % (FROM, TO))
     except:
-        print("failed to send mail:\n",sys.exc_info()[0])
+        print("failed to send mail:\n", sys.exc_info()[0])
+
 
 class Mikolajki:
-    def __init__(self,text_file,forbidden,host_email,host_pwd):
+    def __init__(self, text_file, forbidden, host_email, host_pwd):
         self.text_file = text_file
         self.forbidden = forbidden
         self.host_email = host_email
         self.host_pwd = host_pwd
 
-
         self.load_participants()
         self.load_rules()
         self.shuffle()
-        self.list_participants()
-
+        # self.list_participants()
+        self.send_info()
 
     def load_participants(self):
 
@@ -67,23 +67,24 @@ class Mikolajki:
                     Giver.email = row[0]
                     Giver.name = row[1] + " " + row[2]
                     self.givers.append(Giver)
-                    print(Giver.email,Giver.name)
+                    print(Giver.email, Giver.name)
         except:
             print(sys.exc_info())
         self.receivers = self.givers[:]
 
     def list_participants(self):
         for giver, receiver in zip(self.givers, self.receivers):
-            print(giver.email," has to buy something for ",receiver.email)
+            print(giver.email, " has to buy something for ", receiver.email)
 
     def shuffle(self):
         counter = 0
         while self.check_rules() != True:
             shuffle(self.receivers)
-            counter+=1
+            counter += 1
         print("\nAfter " + str(counter) + " shuffles, the shuffle gave correct giver-receiver list\n ")
 
     def load_rules(self):
+        print("\n")
         self.rules = {}
         try:
             with open(self.forbidden, 'r', encoding='utf-8-sig') as csvfile:
@@ -114,8 +115,8 @@ class Mikolajki:
 
             Wesołych Świąt!
             """.format(giver.name, receiver.name)
-            send_email(HOST_EMAIL,  HOST_PASSWORD, giver.email, subject, text_content)
+            send_email(HOST_EMAIL, HOST_PASSWORD, giver.email, subject, text_content)
+            print("Mail to {0} has been sent".format(giver.email))
 
 
-
-Mikolajki("lista.txt","forbidden.txt",HOST_EMAIL,HOST_PASSWORD)
+Mikolajki("lista.txt", "forbidden.txt", HOST_EMAIL, HOST_PASSWORD)
