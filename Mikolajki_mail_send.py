@@ -11,9 +11,10 @@ import os, sys
 import csv
 
 # enter your gmail credentials to see result!
-HOST_EMAIL = ""
-HOST_PASSWORD = ""
-SUBJECT = "[WOODSTOCK] stań się mikołajem "
+HOST_EMAIL = "swietymikolajwoodstoku"
+HOST_PASSWORD = "haslo123"
+SUBJECT = "[WOODSTOCK] Stan sie mikolajem juz dzis "
+#SUBJECT = "[WOODSTOCK] TEST MSG "
 
 
 def send_email(user, pwd, recipient, subject, body):
@@ -37,7 +38,7 @@ def send_email(user, pwd, recipient, subject, body):
         # ssl server doesn't support or need tls, so don't call server_ssl.starttls()
         server_ssl.sendmail(FROM, TO, message)
         server_ssl.close()
-        print('successfully sent the mailfrom %s to %s' % (FROM, TO))
+        print('successfully sent the mail from SantaClaus to %s' % (FROM, TO))
     except:
         print("failed to send mail:\n", sys.exc_info()[0])
 
@@ -52,7 +53,7 @@ class Mikolajki:
         self.load_participants()
         self.load_rules()
         self.shuffle()
-        # self.list_participants()
+        self.list_participants()
         self.send_info()
 
     def load_participants(self):
@@ -63,9 +64,10 @@ class Mikolajki:
             with open(self.text_file, 'r', encoding='utf-8-sig') as csvfile:
                 spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
                 for i, row in enumerate(spamreader):
-                    Giver = namedtuple("Giver", "email, name")
+                    Giver = namedtuple("Giver", "email, name, gender")
                     Giver.email = row[0]
                     Giver.name = row[1] + " " + row[2]
+                    Giver.gender = row[3]
                     self.givers.append(Giver)
                     print(Giver.email, Giver.name)
         except:
@@ -107,15 +109,52 @@ class Mikolajki:
 
     def send_info(self):
         for giver, receiver in zip(self.givers, self.receivers):
-            subject = SUBJECT + giver.name
-            text_content = """\
-            Drogi {0}!
+            subject = SUBJECT + giver.name + "!"
+            gender_text = "mu" if (receiver.gender == 'M') else "jej"
+            if giver.gender == 'M':
+                text_content = """\
+                Szanowny {0}!
 
-            Komputery internetowe wylosowały dla Ciebie {1}.
+                Komputery internetowe wylosowaly dla Ciebie {1}.
+                Masz okazje sprawic {2} nieco przyjemnosci na Wigilii u Grzesia :)
 
-            Wesołych Świąt!
-            """.format(giver.name, receiver.name)
+                Wesolych Swiat!
+
+                S.M.
+
+                """.format(giver.name, receiver.name, gender_text)
+            elif giver.gender == 'K':
+                text_content = """\
+                Szanowna {0}!
+
+                Zbliza sie magiczny czas swiat.
+                Niebawem drobne platki sniegu ozdobia nasze ulice,
+                a kolorowe swiatelka oswietla ciemne wieczory.
+                To czas milosci i radosci, dlatego w tym duchu spotkamy sie
+                u Grzesia na wspolnej Wigilii.
+
+                Swiety mikolaj wylosowal dla Ciebie {1}.
+                Masz okazje sprawic {2} nieco przyjemnosci :)
+
+                Wesolych Swiat!
+
+                S.M.
+
+                """.format(giver.name, receiver.name, gender_text)
+            else:
+                text_content = """\
+                {0}!
+
+                Kup prezent dla {1}.
+                Masz okazje sprawic {2} nieco przyjemnosci :)
+
+
+                """.format(giver.name,receiver.name, gender_text)
+
+
+
             send_email(HOST_EMAIL, HOST_PASSWORD, giver.email, subject, text_content)
+            #print(text_content)
             print("Mail to {0} has been sent".format(giver.email))
 
 
