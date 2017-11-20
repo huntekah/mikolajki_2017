@@ -12,7 +12,7 @@ import csv
 
 # enter your gmail credentials to see result!
 HOST_EMAIL = "swietymikolajwoodstoku"
-HOST_PASSWORD = "haslo123"
+HOST_PASSWORD = "NIE_PODAM_GO_WAM"
 SUBJECT = "[WOODSTOCK] Stan sie mikolajem juz dzis "
 #SUBJECT = "[WOODSTOCK] TEST MSG "
 
